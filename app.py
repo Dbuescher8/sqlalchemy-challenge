@@ -48,7 +48,7 @@ def names():
     # Create our session (link) from Python to the DB
   session = Session(engine)
 
- inspector = inspect(engine)
+inspector = inspect(engine)
 inspector.get_table_names()
 
 
@@ -68,8 +68,6 @@ for c in columns:
 
 
 
-@app.route("/api/v1.0/passengers")
+@app.route("/api/v1.0/precipitation")
 
-
-if __name__ == '__main__':
-    app.run(debug=True)
+app.run(debug=True)
