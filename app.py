@@ -67,6 +67,10 @@ def stations():
     return jsonify(stations_list)
 
 
+
+
+
+
   # Get a list of column names and types
 columns = inspector.get_columns('measurement')
 for c in columns:
@@ -81,8 +85,18 @@ for c in columns:
 # columns
     session.close()
 
+  results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+                filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
+
+   start_end_tobs = []
+    for min, avg, max in results:
+        start_end_tobs_dict = {}
+        start_end_tobs_dict["min_temp"] = min
+        start_end_tobs_dict["avg_temp"] = avg
+        start_end_tobs_dict["max_temp"] = max
+        start_end_tobs.append(start_end_tobs_dict) 
 
 
-@app.route("/api/v1.0/precipitation")
 
+if __name__ == "__main__":
 app.run(debug=True)
