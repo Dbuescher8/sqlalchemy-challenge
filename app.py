@@ -36,20 +36,35 @@ app = Flask(__name__)
 def welcome():
     """List all available api routes."""
     return (
-        f"/api/v1.0/stations"
-        f"/api/v1.0/precipitation"
-        f"/api/v1.0/tobs>"
-        f"/api/v1.0/<start>/<end>"
+         f"List of Available Routes:<br/>"
+        f"/api/v1.0/precipitation<br/>"
+        f"/api/v1.0/stations<br/>"
+        f"/api/v1.0/tobs<br/>"
+        f"/api/v1.0/start<br/>"
+        f"/api/v1.0/start/end<br/>"
     )
 
 
-@app.route("/api/v1.0/stations")
-def names():
-    # Create our session (link) from Python to the DB
-  session = Session(engine)
+@app.route("/api/v1.0/precipitation")
+def precipitation():
+    session = Session(engine)
+    precip_query = session.query(measure.date, measure.prcp).all()
+    session.close()
+    precip_list = []
+    for date, prcp in precip_query:
+        dpdict = {}
+        dpdict["date"] = date
+        dpdict["prcp"] = prcp
+        precip_list.append(dpdict)
+    return jsonify(precip_list)
 
-inspector = inspect(engine)
-inspector.get_table_names()
+@app.route("/api/v1.0/stations")
+def stations():
+    session = Session(engine)
+    stations_query = session.query(station.name).all()
+    session.close()
+    stations_list = list(np.ravel(stations_query))
+    return jsonify(stations_list)
 
 
   # Get a list of column names and types
