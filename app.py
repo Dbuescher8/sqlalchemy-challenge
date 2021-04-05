@@ -47,24 +47,35 @@ def welcome():
 
 @app.route("/api/v1.0/precipitation")
 def precipitation():
-    session = Session(engine)
-    precip_query = session.query(measure.date, measure.prcp).all()
-    session.close()
-    precip_list = []
-    for date, prcp in precip_query:
-        dpdict = {}
-        dpdict["date"] = date
-        dpdict["prcp"] = prcp
-        precip_list.append(dpdict)
-    return jsonify(precip_list)
+    results1 = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date>="2016-08-23").all()
+    first_dict = list(np.ravel(results1))
+#  Convert the query results to a Dictionary using `date` as the key and `tobs` as the value.
+    first_dict = []
+    for temps in results1:
+        temps_dict = {}
+        temps_dict["date"] = Measurement.date
+        temps_dict["tobs"] = Measurement.tobs
+        first_dict.append(temps_dict)
+
+#  Return the JSON representation of your dictionary.
+    return jsonify(first_dict)
 
 @app.route("/api/v1.0/stations")
 def stations():
-    session = Session(engine)
-    stations_query = session.query(station.name).all()
-    session.close()
-    stations_list = list(np.ravel(stations_query))
-    return jsonify(stations_list)
+    results2 = session.query(Station.station, Station.name).all()
+
+    sec_dict = list(np.ravel(results2))
+# # #  Convert the query results to a Dictionary.
+    sec_dict = []
+    for sta in results2:
+        station_dict = {}
+        station_dict["station"] = Station.station
+        station_dict["name"] = Station.name
+        sec_dict.append(station_dict)
+
+# # #  Return the JSON representation of your dictionary.
+
+    return jsonify(sec_dict)
 
 @app.route("/api/v1.0/<start_date>")
 def Start_date(start_date):
